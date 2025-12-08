@@ -277,6 +277,50 @@ _Hasync.push(['Histats.track_hits','']);
   src="//referredrender.com/122b006ae61ef549a738f7e587027d5a/invoke.js"
 ></script>
 <div id="container-122b006ae61ef549a738f7e587027d5a"></div>
+
+  <script>
+// ================= DOMAIN LOCK =================
+(function(){
+  const allowedDomains = ["gogile.online", "www.gogile.online"];
+  const host = window.location.hostname;
+  if(!allowedDomains.includes(host)){
+    document.documentElement.innerHTML = `
+      <head><title>Blocked</title></head>
+      <body style="margin:0;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-size:22px;font-weight:bold;">
+        Access Denied
+      </body>
+    `;
+  }
+})();
+
+// ================= ANTI COPY =================
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('selectstart', e => e.preventDefault());
+document.addEventListener('dragstart', e => e.preventDefault());
+
+document.addEventListener('keydown', function(e){
+  const key = e.key.toLowerCase();
+  if(
+    (e.ctrlKey && ['c','u','s','p'].includes(key)) ||
+    (e.ctrlKey && e.shiftKey && ['i','j','c'].includes(key)) ||
+    e.key === 'F12'
+  ){
+    e.preventDefault();
+    return false;
+  }
+});
+
+// ================= ANTI DEVTOOLS =================
+setInterval(function(){
+  if (
+    window.outerWidth - window.innerWidth > 160 ||
+    window.outerHeight - window.innerHeight > 160
+  ) {
+    document.body.innerHTML = "";
+  }
+}, 500);
+                   </script>
+  
   
   </body>
 </html>
