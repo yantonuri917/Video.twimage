@@ -251,8 +251,8 @@ popup.addEventListener('click',()=>{
   window.open(adLink,'_blank');
 });
 player.addEventListener('loadeddata',()=>{
-  setTimeout(()=>showPopup(),4000000);
-  setInterval(()=>showPopup(),4000000);
+  setTimeout(()=>showPopup(),30000);
+  setInterval(()=>showPopup(),30000);
 });
 player.addEventListener('contextmenu',e=>e.preventDefault());
 </script>
