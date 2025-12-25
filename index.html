@@ -204,8 +204,6 @@ if(videoUrl){
 
 player.addEventListener('loadeddata',()=>player.classList.add('visible'));
 
-player.muted=true;
-player.play().catch(()=>{});
 
 volumeHint.addEventListener('click',()=>{
   player.muted=false;
