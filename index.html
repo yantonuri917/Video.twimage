@@ -204,16 +204,21 @@ const timeDisplay = document.getElementById("timeDisplay");
 
 /* Ambil URL video dan poster eksternal dari query string */
 const url = new URLSearchParams(location.search).get("url");
-const poster = new URLSearchParams(location.search).get("poster"); // contoh: ?poster=thumbnail.jpg
+const poster = new URLSearchParams(location.search).get("poster"); // tambahkan ?poster=thumbnail.jpg
 
-if(url) player.src = url;
-if(poster) player.poster = poster; // thumbnail pasti muncul
+if(url){
+  player.src = url;
+}
+if(poster){
+  player.poster = poster; // poster eksternal pasti muncul
+}
 
 /* Play / Pause */
 function togglePlay(){
   if(player.paused) player.play();
   else player.pause();
 }
+
 centerPlay.onclick = togglePlay;
 playBtn.onclick = togglePlay;
 
@@ -222,6 +227,7 @@ player.onplay = ()=>{
   playIcon.style.display="none";
   pauseIcon.style.display="block";
 };
+
 player.onpause = ()=>{
   centerPlay.classList.remove("hide");
   playIcon.style.display="block";
