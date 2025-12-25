@@ -3,15 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>video twimg</title>
-
+<title>Video Player dengan Poster Eksternal</title>
 <style>
 :root{
   --accent:#ff4747;
   --bar-bg:rgba(17,17,17,.45);
   --bar-blur:6px;
 }
-
 html,body{
   margin:0;
   padding:0;
@@ -20,7 +18,7 @@ html,body{
   overflow:hidden;
 }
 
-/* ===== IKLAN ===== */
+/* IKLAN */
 #adTop,#adBottom{
   position:fixed;
   left:0;
@@ -35,7 +33,7 @@ html,body{
 #adTop{top:0}
 #adBottom{bottom:0}
 
-/* ===== VIDEO ===== */
+/* VIDEO */
 #videoWrapper{
   position:fixed;
   top:60px;
@@ -55,7 +53,7 @@ video{
   background:#000;
 }
 
-/* ===== PLAY TENGAH ===== */
+/* PLAY TENGAH */
 #centerPlay{
   position:absolute;
   width:90px;
@@ -78,7 +76,7 @@ video{
 }
 #centerPlay.hide{display:none}
 
-/* ===== CONTROLS ===== */
+/* CONTROLS */
 #customControls{
   position:fixed;
   left:12px;
@@ -95,7 +93,6 @@ video{
   box-shadow:0 6px 24px rgba(0,0,0,.6);
   z-index:1000;
 }
-
 #barPlay{
   width:44px;
   height:44px;
@@ -108,14 +105,12 @@ video{
   cursor:pointer;
 }
 #barPlay svg{width:18px;height:18px;fill:#fff}
-
 #progressWrap{
   flex:1;
   display:flex;
   align-items:center;
   gap:12px;
 }
-
 #progressContainer{
   flex:1;
   height:6px;
@@ -125,14 +120,12 @@ video{
   cursor:pointer;
   position:relative;
 }
-
 #progressBar{
   position:absolute;
   left:0;top:0;bottom:0;
   width:0%;
   background:var(--accent);
 }
-
 #timeDisplay{
   min-width:86px;
   text-align:right;
@@ -141,34 +134,25 @@ video{
 }
 </style>
 </head>
-
 <body>
 
 <!-- IKLAN ATAS -->
-<div id="adTop"><script>
-
-  atOptions = {
-
-    'key' : '64e783bd557c30cbf66293b5c5fda05f',
-
-    'format' : 'iframe',
-
-    'height' : 90,
-
-    'width' : 728,
-
-    'params' : {}
-
-  };
-
-</script>
-
-<script src="https://stinkymildred.com/64e783bd557c30cbf66293b5c5fda05f/invoke.js"></script></div>
+<div id="adTop">
+  <script>
+    atOptions = {
+      'key' : '64e783bd557c30cbf66293b5c5fda05f',
+      'format' : 'iframe',
+      'height' : 90,
+      'width' : 728,
+      'params' : {}
+    };
+  </script>
+  <script src="https://stinkymildred.com/64e783bd557c30cbf66293b5c5fda05f/invoke.js"></script>
+</div>
 
 <!-- VIDEO -->
 <div id="videoWrapper">
   <video id="player" playsinline preload="metadata"></video>
-
   <div id="centerPlay">
     <svg viewBox="0 0 24 24">
       <path d="M8 5v14l11-7z"/>
@@ -177,25 +161,18 @@ video{
 </div>
 
 <!-- IKLAN BAWAH -->
-<div id="adBottom"><script>
-
-  atOptions = {
-
-    'key' : '64e783bd557c30cbf66293b5c5fda05f',
-
-    'format' : 'iframe',
-
-    'height' : 90,
-
-    'width' : 728,
-
-    'params' : {}
-
-  };
-
-</script>
-
-<script src="https://stinkymildred.com/64e783bd557c30cbf66293b5c5fda05f/invoke.js"></script></div>
+<div id="adBottom">
+  <script>
+    atOptions = {
+      'key' : '64e783bd557c30cbf66293b5c5fda05f',
+      'format' : 'iframe',
+      'height' : 90,
+      'width' : 728,
+      'params' : {}
+    };
+  </script>
+  <script src="https://stinkymildred.com/64e783bd557c30cbf66293b5c5fda05f/invoke.js"></script>
+</div>
 
 <!-- CONTROLS -->
 <div id="customControls">
@@ -207,13 +184,11 @@ video{
       <path d="M6 19h4V5H6zm8-14v14h4V5z"/>
     </svg>
   </button>
-
   <div id="progressWrap">
     <div id="progressContainer">
       <div id="progressBar"></div>
     </div>
   </div>
-
   <div id="timeDisplay">0:00 / 0:00</div>
 </div>
 
@@ -227,43 +202,18 @@ const progressBar = document.getElementById("progressBar");
 const progressBox = document.getElementById("progressContainer");
 const timeDisplay = document.getElementById("timeDisplay");
 
-let thumbnailDone = false;
-
-/* LOAD VIDEO */
+/* Ambil URL video dan poster eksternal dari query string */
 const url = new URLSearchParams(location.search).get("url");
-if(url){
-  player.src = url;
-  player.load();
-}
+const poster = new URLSearchParams(location.search).get("poster"); // contoh: ?poster=thumbnail.jpg
 
-/* AMBIL THUMBNAIL DARI VIDEO */
-player.addEventListener("loadedmetadata",()=>{
-  if(player.duration > 1){
-    player.currentTime = 1;
-  }
-});
+if(url) player.src = url;
+if(poster) player.poster = poster; // thumbnail pasti muncul
 
-player.addEventListener("seeked",()=>{
-  if(thumbnailDone) return;
-
-  const canvas = document.createElement("canvas");
-  canvas.width = player.videoWidth;
-  canvas.height = player.videoHeight;
-
-  canvas.getContext("2d").drawImage(player,0,0);
-  player.setAttribute("poster",canvas.toDataURL("image/jpeg",0.85));
-
-  player.currentTime = 0;
-  player.pause();
-  thumbnailDone = true;
-});
-
-/* PLAY / PAUSE */
+/* Play / Pause */
 function togglePlay(){
   if(player.paused) player.play();
   else player.pause();
 }
-
 centerPlay.onclick = togglePlay;
 playBtn.onclick = togglePlay;
 
@@ -271,23 +221,20 @@ player.onplay = ()=>{
   centerPlay.classList.add("hide");
   playIcon.style.display="none";
   pauseIcon.style.display="block";
-  player.removeAttribute("poster");
 };
-
 player.onpause = ()=>{
   centerPlay.classList.remove("hide");
   playIcon.style.display="block";
   pauseIcon.style.display="none";
 };
 
-/* PROGRESS */
+/* Progress bar */
 player.ontimeupdate = ()=>{
   const d = player.duration || 0;
   const c = player.currentTime || 0;
   progressBar.style.width = d ? (c/d*100)+"%" : "0%";
   timeDisplay.textContent = fmt(c)+" / "+fmt(d);
 };
-
 progressBox.onclick = e=>{
   const r = progressBox.getBoundingClientRect();
   if(player.duration){
@@ -302,33 +249,6 @@ function fmt(s){
 
 document.addEventListener("contextmenu",e=>e.preventDefault());
 </script>
-  <script type="text/javascript">
-
-var _Hasync=_Hasync||[];
-
-_Hasync.push(['Histats.start','1,4978236,4,0,0,0,00000000']);
-
-_Hasync.push(['Histats.fasi','1']);
-
-_Hasync.push(['Histats.track_hits','']);
-
-(function(){
-
-  var hs=document.createElement('script');hs.type='text/javascript';hs.async=true;
-
-  hs.src=('//s10.histats.com/js15_as.js');
-
-  (document.head||document.body).appendChild(hs);
-
-})();
-
-</script>
-
-<noscript><a href="/" target="_blank"><img src="//sstatic1.histats.com/0.gif?4978236&101" alt="hit counter" border="0"></a>
-
-  </noscript>
-  
-  <script src="https://stinkymildred.com/93/40/7b/93407ba82bd13c152c864f91fc22e019.js"></script>
 
 </body>
 </html>
