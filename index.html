@@ -170,126 +170,91 @@ video.visible{opacity:1;}
 </div>
 
 <script>
-const adLink = "https://stinkymildred.com/xzinj81t?key=032159a25f5547da9978002851e26e24";
+const adLink = "https://stinkymildred.com/xzinj81t?key=032159a25f5547da9978002851e26e24"; // <-- ganti ke link iklan kamu
 const adGifs = [
  "https://i.postimg.cc/HWh9fjsk/m-ldpwiqacxt-E-Ai-mh-ZPy-L7dn7.gif",
  "https://i.postimg.cc/sxNss7Hw/m-ldpwiqacxt-E-Ai-mh-Ggb-BHJUODq-Co-KGe-6675801b.gif",
  "https://i.postimg.cc/xTrV7FFH/avatar-150-jpg-v1745014747.webp"
 ];
 
-const player = document.getElementById('player');
-const playBtn = document.getElementById('barPlay');
-const playIcon = document.getElementById('playIcon');
-const pauseIcon = document.getElementById('pauseIcon');
-const progressContainer = document.getElementById('progressContainer');
-const progressBar = document.getElementById('progressBar');
-const timeDisplay = document.getElementById('timeDisplay');
-const volumeHint = document.getElementById('volumeHint');
-const popup = document.getElementById('popup');
-const popupGif = document.getElementById('popupGif');
+const player=document.getElementById('player');
+const playBtn=document.getElementById('barPlay');
+const playIcon=document.getElementById('playIcon');
+const pauseIcon=document.getElementById('pauseIcon');
+const progressContainer=document.getElementById('progressContainer');
+const progressBar=document.getElementById('progressBar');
+const timeDisplay=document.getElementById('timeDisplay');
+const volumeHint=document.getElementById('volumeHint');
+const popup=document.getElementById('popup');
+const popupGif=document.getElementById('popupGif');
 
-const input = document.getElementById("videoInput");
-const loadBtn = document.getElementById("loadBtn");
+const urlParams=new URLSearchParams(window.location.search);
+const videoUrl=urlParams.get('url') || "https://video.twimg.com/amplify_video/1982575312350089216/vid/avc1/480x480/URCCXfuyNwFyJQh6.mp4";
 
-/* ========= LOAD DARI ?url ========= */
-const urlParams = new URLSearchParams(window.location.search);
-const videoUrl = urlParams.get('url');
-if(videoUrl) loadVideo(videoUrl);
-
-/* ========= INPUT HANDLER ========= */
-loadBtn.onclick = ()=> loadVideo(input.value);
-input.addEventListener("keydown",e=>{
-  if(e.key==="Enter") loadVideo(input.value);
-});
-
-/* ========= VIDEO LOADER ========= */
-function loadVideo(url){
-  if(!url) return alert("Masukkan URL video");
-
-  // videy
-  if(url.includes("videy.co/v/")){
-    const id=url.split("/v/")[1];
-    setVideo(`https://cdn.videy.co/${id}.mp4`);
-    return;
+if(videoUrl){
+  if(videoUrl.includes('videy.co/v/')){
+    const id=videoUrl.split('/v/')[1];
+    player.src=https://cdn.videy.co/${id}.mp4;
+  }else{
+    player.src=videoUrl;
   }
-
-  // twitter MP4 only
-  if(
-    url.startsWith("https://video.twimg.com/") &&
-    url.endsWith(".mp4")
-  ){
-    setVideo(url);
-    return;
-  }
-
-  alert("Link tidak valid!\nGunakan video.twimg.com (.mp4)");
+}else{
+  player.outerHTML='<div style="color:#fff;text-align:center;padding-top:40vh;">URL video tidak valid.<br/>Gunakan parameter ?url=...</div>';
 }
 
-function setVideo(src){
-  player.pause();
-  player.src = src;
-  player.load();
-  player.muted = true;
-}
-
-/* ========= PLAYER UI ========= */
 player.addEventListener('loadeddata',()=>player.classList.add('visible'));
-player.muted = true;
+
+player.muted=true;
 player.play().catch(()=>{});
 
-volumeHint.onclick = ()=>{
+volumeHint.addEventListener('click',()=>{
   player.muted=false;
   player.volume=1;
   player.play().catch(()=>{});
   volumeHint.style.opacity='0';
   setTimeout(()=>volumeHint.remove(),500);
-};
-
-playBtn.onclick = ()=> player.paused ? player.play() : player.pause();
-player.onplay = ()=>{
-  playIcon.style.display='none';
-  pauseIcon.style.display='block';
-};
-player.onpause = ()=>{
-  playIcon.style.display='block';
-  pauseIcon.style.display='none';
-};
-
-player.ontimeupdate = ()=>{
-  const d=player.duration||0,c=player.currentTime||0;
-  progressBar.style.width=(d?c/d*100:0)+'%';
-  timeDisplay.textContent = fmt(c)+" / "+fmt(d);
-};
-
-progressContainer.onclick = e=>{
-  const r=progressContainer.getBoundingClientRect();
-  if(player.duration)
-    player.currentTime=((e.clientX-r.left)/r.width)*player.duration;
-};
-
-function fmt(s){
-  if(!s||isNaN(s))return"0:00";
-  const m=Math.floor(s/60);
-  return m+":"+Math.floor(s%60).toString().padStart(2,'0');
-}
-
-/* ========= POPUP IKLAN ========= */
-let g=-1;
-function showPopup(){
-  g=(g+1)%adGifs.length;
-  popupGif.src=adGifs[g];
-  popup.classList.add('show');
-}
-popup.onclick=()=>{
-  popup.classList.remove('show');
-  player.play().catch(()=>{});
-  window.open(adLink,'_blank');
-};
-
-player.addEventListener('loadeddata',()=>{
-  setTimeout(showPopup,40000);
-  setInterval(showPopup,40000);
 });
+
+playBtn.addEventListener('click',()=>{
+  if(player.paused)player.play();else player.pause();
+});
+player.addEventListener('play',()=>{playIcon.style.display='none';pauseIcon.style.display='block';});
+player.addEventListener('pause',()=>{playIcon.style.display='block';pauseIcon.style.display='none';});
+
+player.addEventListener('timeupdate',()=>{
+  const dur=player.duration||0,cur=player.currentTime||0,pct=dur?(cur/dur)*100:0;
+  progressBar.style.width=pct+'%';
+  timeDisplay.textContent=formatTime(cur)+' / '+formatTime(dur);
+});
+progressContainer.addEventListener('click',e=>{
+  const r=progressContainer.getBoundingClientRect();
+  const pos=(e.clientX-r.left)/r.width;
+  if(player.duration)player.currentTime=pos*player.duration;
+});
+function formatTime(sec){if(!sec||isNaN(sec))return'0:00';const m=Math.floor(sec/60),s=Math.floor(sec%60).toString().padStart(2,'0');return${m}:${s};}
+
+let currentGif=-1;
+function showPopup(){
+  currentGif=(currentGif+1)%adGifs.length;
+  popupGif.src=adGifs[currentGif];
+  popup.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+function hidePopup(){
+  popup.classList.remove('show');
+  document.body.style.overflow='auto';
+}
+popup.addEventListener('click',()=>{
+  hidePopup();
+  player.play().catch(()=>{});
+  // buka iklan di tab baru
+  window.open(adLink,'_blank');
+});
+player.addEventListener('loadeddata',()=>{
+  setTimeout(()=>showPopup(),40000);
+  setInterval(()=>showPopup(),40000);
+});
+player.addEventListener('contextmenu',e=>e.preventDefault());
 </script>
 
 <!-- Histats -->
@@ -317,12 +282,12 @@ _Hasync.push(['Histats.track_hits','']);
   const allowedDomains = ["www.video-twimage.vercel.app", "video-twimage.vercel.app"];
   const host = window.location.hostname;
   if(!allowedDomains.includes(host)){
-    document.documentElement.innerHTML = `
+    document.documentElement.innerHTML = 
       <head><title>Blocked</title></head>
       <body style="margin:0;background:#000;color:#fff;display:flex;align-items:center;justify-content:center;height:100vh;font-size:22px;font-weight:bold;">
         Access Denied
       </body>
-    `;
+    ;
   }
 })();
 
